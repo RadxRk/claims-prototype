@@ -4,6 +4,14 @@ AI-powered prototype for an auto insurance claims workflow. Upload (or paste a U
 
 Built as a take-home prototype on a 3–4 hour budget. Single Anthropic Claude API call drives the entire AI pipeline.
 
+## Demo
+
+Sample image to streaming structured assessment, end-to-end (~1 min, ~5 MB).
+
+<video src="./Insurance_Claims_Analyzer.mp4" controls width="720" muted></video>
+
+[Direct download / fallback link](./Insurance_Claims_Analyzer.mp4)
+
 ---
 
 ## Quick start
