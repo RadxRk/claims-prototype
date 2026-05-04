@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.venv/
+
+# internal speaker notes — not for the customer-facing repo
+TALK_TRACK.md
+TALK_TRACK.pdf
+
+# internal docs / dev-only instructions — keep out of the customer-facing repo
+AGENTS.md
+CLAUDE.md
+image-processing.excalidraw
+image-processing.png
