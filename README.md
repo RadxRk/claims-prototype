@@ -58,11 +58,11 @@ A single `client.beta.messages.stream()` call drives everything. The image (refe
 
 After Claude returns, the server **validates the JSON with Zod**, then runs four deterministic rules to compute typed `Trigger[]` objects (low confidence, severe damage, poor image quality, high-value claim). These are the human-review escalation signals — the AI's self-assessment is a fallback; the typed triggers are the source of truth. Each trigger carries a `code` for routing, the actual `value`, and the `threshold` that tripped — machine-readable and auditable.
 
-→ Full step-by-step in [How the AI logic works](#how-the-ai-logic-works).
+→ Full step-by-step in [The AI pipeline in detail](#the-ai-pipeline-in-detail).
 
 ### Potential improvements
 
-The full roadmap is in [SOW.md](./SOW.md) as five phases. Highlights:
+The full roadmap is in the SOW (shared separately as part of the engagement) and breaks into five phases. Highlights:
 
 - **Persistence + audit log** (Phase 1): Postgres for claim records, S3 + KMS for images with 7-year retention, full read/write audit trail with the Claude model version captured for every analysis.
 - **Production cost integration** (Phase 1.5): replace the in-prompt reference table with **Mitchell / CCC ONE / Audatex APIs** for parts-level pricing — this is the actual stack every major US carrier uses.
@@ -102,7 +102,7 @@ uv run python render_excalidraw.py path/to/claims-prototype/architecture.excalid
 
 ---
 
-## How the AI logic works
+## The AI pipeline in detail
 
 The whole AI pipeline is a single `client.beta.messages.create()` call. There is no chained model orchestration — Claude does everything.
 
@@ -320,7 +320,7 @@ claims-prototype/
 
 ## Potential improvements (future work)
 
-The SOW (`SOW.md`) lays out the roadmap as Phase 1 → Phase 4. In short:
+The SOW (shared separately) lays out the roadmap as Phase 1 → Phase 4. In short:
 
 1. **Pilot launch** (Phase 1, 8 weeks) — hosted multi-tenant app, carrier SSO, persistence (Postgres + S3 with KMS, 7-year retention), audit log capturing the model version per analysis, CV-based PII redaction (license plates + faces), and claims-system integration (Guidewire / Duck Creek webhook). Cross-model verification on >$10k claims (Sonnet 4.6 + Opus 4.7, flag disagreement) ships in this phase.
 2. **Production cost integration + bulk reprocessing** (Phase 1.5, 4 weeks) — replace the in-prompt reference table with Mitchell / CCC ONE / Audatex APIs for parts-level pricing. Operationalize the Anthropic Messages Batches API for non-latency-sensitive workloads (model-upgrade reanalysis, fraud backfill, compliance audits) at 50% of synchronous-API cost.
@@ -336,7 +336,7 @@ Smaller tactical improvements (outside the SOW phases, could fit inside any of t
 
 ### Orchestration strategy past the POC
 
-The Phase 0 prototype is a single `messages.create()` call. Production keeps that single-call architecture as the **default spine** — it handles the majority of claims correctly with one round-trip, one schema, and one transaction boundary — and layers **chained model orchestration** on top only as gated specializations where a specific failure mode or cost dynamic justifies the extra inference. Six chained patterns ship across Phases 1–3 (full table in `SOW.md`):
+The Phase 0 prototype is a single `messages.create()` call. Production keeps that single-call architecture as the **default spine** — it handles the majority of claims correctly with one round-trip, one schema, and one transaction boundary — and layers **chained model orchestration** on top only as gated specializations where a specific failure mode or cost dynamic justifies the extra inference. Six chained patterns ship across Phases 1–3 (full table in the SOW):
 
 | Phase | Chain pattern              | Trigger                           | What chains                                                             |
 | ----- | -------------------------- | --------------------------------- | ----------------------------------------------------------------------- |
